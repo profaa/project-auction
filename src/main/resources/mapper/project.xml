@@ -1,21 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
-<mapper namespace="com.auction.flab.application.mapper.AuctionMapper">
+<mapper namespace="com.auction.flab.application.mapper.ProjectMapper">
 
-    <select id="getProjects" resultType="com.auction.flab.application.dto.ProjectDto">
-        SELECT ID
-             , PROPOSER_ID
-             , NAME
-             , AMOUNT
-             , PERIOD
-             , DEADLINE
-             , START_DATE
-             , CONTENT
-        FROM PROJECT
-    </select>
-
-    <insert id="addProject" parameterType="com.auction.flab.application.dto.ProjectDto" useGeneratedKeys="true" keyProperty="id">
+    <insert id="addProject" parameterType="com.auction.flab.application.vo.ProjectVo" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO PROJECT (
                PROPOSER_ID
              , NAME
