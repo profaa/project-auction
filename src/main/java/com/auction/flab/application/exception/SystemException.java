@@ -5,8 +5,8 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public class ExceptionDto {
+public class SystemException extends RuntimeException {
 
-    private final String message;
+    private final ErrorCode errorCode;
 
 }
