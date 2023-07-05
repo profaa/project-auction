@@ -1,12 +1,11 @@
 package com.auction.flab.application.service;
 
 import com.auction.flab.application.exception.ErrorCode;
-import com.auction.flab.application.exception.SystemException;
+import com.auction.flab.application.exception.InternalException;
 import com.auction.flab.application.mapper.ProjectMapper;
 import com.auction.flab.application.vo.ProjectVo;
 import com.auction.flab.application.web.dto.ProjectRequestDto;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
+import com.auction.flab.application.web.dto.ProjectResponseDto;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -17,7 +16,7 @@ import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.times;
@@ -29,46 +28,55 @@ class ProjectServiceTest {
     ProjectMapper projectMapper;
     @InjectMocks
     ProjectService projectService;
-    ProjectRequestDto projectRequestDto;
 
-    @BeforeEach
-    void setUp() {
-        projectRequestDto = ProjectRequestDto.builder()
+    @Test
+    void addproject_failed_due_to_db_exception() {
+        // given
+        ProjectRequestDto projectRequestDto = ProjectRequestDto.builder()
                 .proposerId(1L)
                 .name("날씨 정보 오픈 API 프로젝트")
                 .amount(3_000)
                 .period(100)
-                .deadline(LocalDateTime.of(2023, 07, 03, 00, 00, 00))
-                .startDate(LocalDateTime.of(2023, 07, 11, 00, 00, 00))
+                .deadline(LocalDateTime.of(2023, 7, 3, 0, 0, 0))
+                .startDate(LocalDateTime.of(2023, 7, 11, 0, 0, 0))
                 .content("날짜 정보를 제공하는 API를 작성하는 프로젝트 입니다.")
                 .build();
-    }
-
-    @DisplayName("insertProject() fail")
-    @Test
-    void addProject_fail_with_exception() {
-        // given
-        given(projectMapper.insertProject(any(ProjectVo.class))).willReturn(0);
+        given(projectMapper.insertProject(eq(ProjectVo.from(projectRequestDto)))).willReturn(1);
 
         // when
-        SystemException systemException = assertThrows(SystemException.class, () -> projectService.addProject(projectRequestDto));
+        InternalException internalException = assertThrows(InternalException.class, () -> projectService.addProject(projectRequestDto));
 
         // then
-        assertEquals(ErrorCode.EXCEPTION_ON_INPUT_PROJECT, systemException.getErrorCode());
-        then(projectMapper).should(times(1)).insertProject(any(ProjectVo.class));
+        assertEquals(ErrorCode.EXCEPTION_ON_INPUT_PROJECT, internalException.getErrorCode());
+        then(projectMapper).should(times(1)).insertProject(eq(ProjectVo.from(projectRequestDto)));
     }
 
-    @DisplayName("insertProject() success")
     @Test
-    void addProject_success_without_exception() {
+    void addproject_success() {
         // given
-        given(projectMapper.insertProject(any(ProjectVo.class))).willReturn(1);
+        ProjectRequestDto projectRequestDto = ProjectRequestDto.builder()
+                .proposerId(1L)
+                .name("날씨 정보 오픈 API 프로젝트")
+                .amount(3_000)
+                .period(100)
+                .deadline(LocalDateTime.of(2023, 7, 3, 0, 0, 0))
+                .startDate(LocalDateTime.of(2023, 7, 11, 0, 0, 0))
+                .content("날짜 정보를 제공하는 API를 작성하는 프로젝트 입니다.")
+                .build();
+        ProjectVo projectVo = ProjectVo.from(projectRequestDto);
+        given(projectMapper.insertProject(eq(projectVo))).will(invocation -> {
+            projectVo.setId(1L);
+            ProjectVo arg = invocation.getArgument(0);
+            arg.setId(1L);
+            return 1;
+        });
 
         // when
-        projectService.addProject(projectRequestDto);
+        ProjectResponseDto projectResponseDto = projectService.addProject(projectRequestDto);
 
         // then
-        then(projectMapper).should(times(1)).insertProject(any(ProjectVo.class));
+        assertEquals(1L, projectResponseDto.getId());
+        then(projectMapper).should(times(1)).insertProject(eq(projectVo));
     }
 
 }

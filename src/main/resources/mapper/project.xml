@@ -3,7 +3,7 @@
 
 <mapper namespace="com.auction.flab.application.mapper.ProjectMapper">
 
-    <insert id="addProject" parameterType="com.auction.flab.application.vo.ProjectVo" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertProject" parameterType="com.auction.flab.application.vo.ProjectVo" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO PROJECT (
                PROPOSER_ID
              , NAME

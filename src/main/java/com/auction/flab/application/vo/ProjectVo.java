@@ -6,11 +6,8 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Getter
-@ToString
 @Builder
-@AllArgsConstructor
-@NoArgsConstructor
+@Data
 public class ProjectVo {
 
     private Long id;
@@ -23,8 +20,8 @@ public class ProjectVo {
     private String content;
     private ProjectStatus status;
 
-    public static ProjectVo toProjectVo(ProjectRequestDto projectRequestDto) {
-        return new ProjectVo().builder()
+    public static ProjectVo from(ProjectRequestDto projectRequestDto) {
+        return ProjectVo.builder()
                 .proposerId(projectRequestDto.getProposerId())
                 .name(projectRequestDto.getName())
                 .amount(projectRequestDto.getAmount())
