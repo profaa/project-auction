@@ -14,19 +14,19 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<Void> handleValidationExceptions(HttpMessageNotReadableException ex) {
-        log.info("error = {}", ex);
+        log.error("error = {}", ex);
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Void> handleValidationExceptions(MethodArgumentNotValidException ex) {
-        log.info("error = {}", ex);
+        log.error("error = {}", ex);
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Void> handleInternalServerExceptions(Exception ex) {
-        log.info("error = {}", ex);
+        log.error("error = {}", ex);
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 

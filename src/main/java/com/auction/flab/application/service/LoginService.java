@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -18,17 +18,12 @@ public class LoginService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     public MemberVo checkAccount(LoginRequestDto loginRequestDto) {
-        List<MemberVo> members = memberService.getMember(loginRequestDto.getEmail());
-        if (isInvalidAccount(members, loginRequestDto.getPassword())) {
+        MemberVo memberVo = Optional.ofNullable(memberService.getMember(loginRequestDto.getEmail()))
+                .orElseThrow(() -> new InternalException(ErrorCode.EXCEPTION_ON_LOGIN));
+        if (!bCryptPasswordEncoder.matches(loginRequestDto.getPassword(), memberVo.getPassword())) {
             throw new InternalException(ErrorCode.EXCEPTION_ON_LOGIN);
         }
-        return members.get(0);
-    }
-
-    private boolean isInvalidAccount(List<MemberVo> members, String password) {
-        return members == null
-                || members.size() != 1
-                || !bCryptPasswordEncoder.matches(password, members.get(0).getPassword());
+        return memberVo;
     }
 
 }

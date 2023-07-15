@@ -11,7 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -20,13 +20,15 @@ public class MemberService {
     private final MemberMapper memberMapper;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public List<MemberVo> getMember(String email) {
+    public MemberVo getMember(String email) {
         return memberMapper.selectMemberByEmail(email);
     }
 
     @Transactional
     public MemberResponseDto addMember(MemberRequestDto memberRequestDto) {
         memberRequestDto.setPassword(bCryptPasswordEncoder.encode(memberRequestDto.getPassword()));
+        Optional.ofNullable(memberMapper.selectMemberByEmail(memberRequestDto.getEmail()))
+                .orElseThrow(() -> new InternalException(ErrorCode.EXCEPTION_ON_INPUT_MEMBER));
         MemberVo memberVo = MemberVo.from(memberRequestDto);
         memberMapper.insertMember(memberVo);
         if (memberVo.getId() == null) {
