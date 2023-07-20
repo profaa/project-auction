@@ -1,10 +1,11 @@
 package com.auction.flab.application.web.controller;
 
 import com.auction.flab.application.service.LoginService;
-import com.auction.flab.application.service.TokenService;
+import com.auction.flab.application.util.TokenUtil;
 import com.auction.flab.application.vo.MemberVo;
-import com.auction.flab.application.web.dto.LoginResponseDto;
 import com.auction.flab.application.web.dto.LoginRequestDto;
+import com.auction.flab.application.web.dto.LoginResponseDto;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,12 +18,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class LoginController {
 
     private final LoginService loginService;
-    private final TokenService tokenService;
+    private final TokenUtil tokenUtil;
 
-    @PostMapping("/login")
-    public ResponseEntity<LoginResponseDto> createNewAccessToken(@RequestBody LoginRequestDto loginRequestDto) {
+    @PostMapping("/sign-in")
+    public ResponseEntity<LoginResponseDto> createNewAccessToken(@Valid @RequestBody LoginRequestDto loginRequestDto) {
         MemberVo memberVo = loginService.checkAccount(loginRequestDto);
-        String accessToken = tokenService.createNewAccessToken(memberVo);
+        String accessToken = tokenUtil.createNewAccessToken(memberVo);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new LoginResponseDto(accessToken));
     }

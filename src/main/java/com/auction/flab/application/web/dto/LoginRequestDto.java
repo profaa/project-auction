@@ -1,21 +1,21 @@
 package com.auction.flab.application.web.dto;
 
+import com.auction.flab.application.validator.Password;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import org.hibernate.validator.constraints.Length;
 
-@Getter
-@Setter
+@Builder
+@Data
 public class LoginRequestDto {
 
+    @Length(max = 30)
     @Email
     @NotBlank
     private String email;
 
-    @NotBlank
+    @Password
     private String password;
-
-    private String refreshToken;
 
 }

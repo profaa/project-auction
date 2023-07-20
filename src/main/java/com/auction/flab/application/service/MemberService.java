@@ -11,8 +11,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
 @RequiredArgsConstructor
 @Service
 public class MemberService {
@@ -20,21 +18,28 @@ public class MemberService {
     private final MemberMapper memberMapper;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public MemberVo getMember(String email) {
-        return memberMapper.selectMemberByEmail(email);
-    }
-
     @Transactional
     public MemberResponseDto addMember(MemberRequestDto memberRequestDto) {
+        checkDuplication(memberRequestDto);
         memberRequestDto.setPassword(bCryptPasswordEncoder.encode(memberRequestDto.getPassword()));
-        Optional.ofNullable(memberMapper.selectMemberByEmail(memberRequestDto.getEmail()))
-                .orElseThrow(() -> new InternalException(ErrorCode.EXCEPTION_ON_INPUT_MEMBER));
+        Long memberId = insertMember(memberRequestDto);
+        return MemberResponseDto.from(memberId);
+    }
+
+    private void checkDuplication(MemberRequestDto memberRequestDto) {
+        MemberVo memberVo = memberMapper.selectMemberByEmail(memberRequestDto.getEmail());
+        if (memberVo != null) {
+            throw new InternalException(ErrorCode.EXCEPTION_ON_INPUT_MEMBER);
+        }
+    }
+
+    private Long insertMember(MemberRequestDto memberRequestDto) {
         MemberVo memberVo = MemberVo.from(memberRequestDto);
         memberMapper.insertMember(memberVo);
         if (memberVo.getId() == null) {
             throw new InternalException(ErrorCode.EXCEPTION_ON_INPUT_MEMBER);
         }
-        return MemberResponseDto.from(memberVo.getId());
+        return memberVo.getId();
     }
 
 }
