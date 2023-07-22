@@ -29,13 +29,10 @@ public class TokenProvider {
 
     private final JwtProperties jwtProperties;
 
-    public String generateToken(MemberVo memeberVo, Duration expiredAt) {
-        ZoneId zoneid = ZoneId.of("Asia/Seoul");
-        long currentTime = LocalDateTime.now().atZone(zoneid).toInstant().toEpochMilli();
-        return makeToken(new Date(currentTime + expiredAt.toMillis()), memeberVo);
-    }
-
-    private String makeToken(Date expiry, MemberVo memberVo) {
+    public String generateToken(MemberVo memberVo, Duration expiredAt) {
+        ZoneId zoneId = ZoneId.systemDefault();
+        long currentTime = LocalDateTime.now().atZone(zoneId).toInstant().toEpochMilli();
+        Date expiry = new Date(currentTime + expiredAt.toMillis());
         return Jwts.builder()
                 .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
                 .setIssuer(jwtProperties.getIssuer())

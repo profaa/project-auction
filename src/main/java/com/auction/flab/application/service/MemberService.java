@@ -20,17 +20,13 @@ public class MemberService {
 
     @Transactional
     public MemberResponseDto addMember(MemberRequestDto memberRequestDto) {
-        checkDuplication(memberRequestDto);
-        memberRequestDto.setPassword(bCryptPasswordEncoder.encode(memberRequestDto.getPassword()));
-        Long memberId = insertMember(memberRequestDto);
-        return MemberResponseDto.from(memberId);
-    }
-
-    private void checkDuplication(MemberRequestDto memberRequestDto) {
         MemberVo memberVo = memberMapper.selectMemberByEmail(memberRequestDto.getEmail());
         if (memberVo != null) {
             throw new InternalException(ErrorCode.EXCEPTION_ON_INPUT_MEMBER);
         }
+        memberRequestDto.setPassword(bCryptPasswordEncoder.encode(memberRequestDto.getPassword()));
+        Long memberId = insertMember(memberRequestDto);
+        return MemberResponseDto.from(memberId);
     }
 
     private Long insertMember(MemberRequestDto memberRequestDto) {
