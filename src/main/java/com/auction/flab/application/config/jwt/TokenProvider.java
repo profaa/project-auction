@@ -1,6 +1,6 @@
 package com.auction.flab.application.config.jwt;
 
-import com.auction.flab.application.vo.MemberVo;
+import com.auction.flab.application.vo.AuthVo;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Header;
 import io.jsonwebtoken.Jwts;
@@ -19,6 +19,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Component
@@ -26,7 +27,7 @@ public class TokenProvider {
 
     private final JwtProperties jwtProperties;
 
-    public String generateToken(MemberVo memberVo, Duration expiredAt) {
+    public String generateToken(AuthVo authVo, Duration expiredAt) {
         ZoneId zoneId = ZoneId.systemDefault();
         long currentTime = LocalDateTime.now().atZone(zoneId).toInstant().toEpochMilli();
         Date expiry = new Date(currentTime + expiredAt.toMillis());
@@ -35,8 +36,8 @@ public class TokenProvider {
                 .setIssuer(jwtProperties.getIssuer())
                 .setIssuedAt(new Date())
                 .setExpiration(expiry)
-                .setSubject(memberVo.getEmail())
-                .claim("id", memberVo.getId())
+                .setSubject(authVo.getEmail())
+                .claim("id", authVo.getId())
                 .signWith(createKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -45,30 +46,24 @@ public class TokenProvider {
         return Keys.hmacShaKeyFor(jwtProperties.getSecretKey().getBytes(StandardCharsets.UTF_8));
     }
 
-    public boolean validToken(String token) {
+    public Optional<Authentication> getAuthentication(String token) {
+        return getClaims(token).map(claims -> {
+            User user = new User(claims.getSubject(), "", null);
+            Authentication authentication = new UsernamePasswordAuthenticationToken(user, token);
+            return authentication;
+        }).or(Optional::empty);
+    }
+
+    private Optional<Claims> getClaims(String token) {
         try {
-            Jwts.parserBuilder()
+            return Optional.ofNullable(Jwts.parserBuilder()
                     .setSigningKey(DatatypeConverter.parseBase64Binary(jwtProperties.getSecretKey()))
                     .build()
-                    .parseClaimsJws(token);
-            return true;
+                    .parseClaimsJws(token)
+                    .getBody());
         } catch (Exception e) {
-            return false;
+            return Optional.empty();
         }
-    }
-
-    public Authentication getAuthentication(String token) {
-        Claims claims = getClaims(token);
-        User user = new User(claims.getSubject(), "", null);
-        return new UsernamePasswordAuthenticationToken(user, token);
-    }
-
-    private Claims getClaims(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(DatatypeConverter.parseBase64Binary(jwtProperties.getSecretKey()))
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
     }
 
 }

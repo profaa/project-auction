@@ -3,18 +3,12 @@ package com.auction.flab.application.web.dto;
 import com.auction.flab.application.validator.Password;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Positive;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 import org.hibernate.validator.constraints.Length;
 
 @Builder
 @Data
-public class MemberRequestDto {
-
-    @Length(max = 10)
-    @NotBlank
-    private String name;
+public class SignInRequestDto {
 
     @Length(max = 30)
     @Email
@@ -23,10 +17,5 @@ public class MemberRequestDto {
 
     @Password
     private String password;
-
-    @Length(max = 13)
-    @Positive
-    @NotBlank
-    private String mobileNo;
 
 }

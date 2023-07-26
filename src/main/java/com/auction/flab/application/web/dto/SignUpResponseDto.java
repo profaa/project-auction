@@ -5,12 +5,12 @@ import lombok.RequiredArgsConstructor;
 
 @Data
 @RequiredArgsConstructor
-public class MemberResponseDto {
+public class SignUpResponseDto {
 
     private final Long id;
 
-    public static MemberResponseDto from(long id) {
-        return new MemberResponseDto(id);
+    public static SignUpResponseDto from(long id) {
+        return new SignUpResponseDto(id);
     }
 
 }

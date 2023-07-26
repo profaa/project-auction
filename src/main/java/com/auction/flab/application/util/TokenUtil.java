@@ -1,7 +1,7 @@
 package com.auction.flab.application.util;
 
 import com.auction.flab.application.config.jwt.TokenProvider;
-import com.auction.flab.application.vo.MemberVo;
+import com.auction.flab.application.vo.AuthVo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -13,8 +13,8 @@ public class TokenUtil {
 
     private final TokenProvider tokenProvider;
 
-    public String createNewAccessToken(MemberVo memberVo) {
-        return tokenProvider.generateToken(memberVo, Duration.ofHours(2));
+    public String createNewAccessToken(AuthVo authVo) {
+        return tokenProvider.generateToken(authVo, Duration.ofHours(2));
     }
 
 }
