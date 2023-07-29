@@ -6,6 +6,7 @@ build/
 !**/src/test/**/build/
 
 db-config.yml
+jwt-config.yml
 
 ### STS ###
 .apt_generated
@@ -37,3 +38,4 @@ out/
 
 ### VS Code ###
 .vscode/
+/src/test/java/com/auction/flab/application/etc/
