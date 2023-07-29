@@ -7,6 +7,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
@@ -21,6 +22,7 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.util.Optional;
 
+@Slf4j
 @RequiredArgsConstructor
 @Component
 public class TokenProvider {
@@ -62,6 +64,7 @@ public class TokenProvider {
                     .parseClaimsJws(token)
                     .getBody());
         } catch (Exception e) {
+            log.error("getClaims = {}", e.getCause());
             return Optional.empty();
         }
     }

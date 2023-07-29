@@ -8,6 +8,7 @@ import com.auction.flab.application.vo.AuthVo;
 import com.auction.flab.application.web.dto.SignInRequestDto;
 import com.auction.flab.application.web.dto.SignUpRequestDto;
 import com.auction.flab.application.web.dto.SignUpResponseDto;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -35,6 +36,7 @@ class AuthServiceTest {
     @InjectMocks
     AuthService authService;
 
+    @DisplayName("회원 가입 성공")
     @Test
     void signUp_success() {
         // given
@@ -61,6 +63,7 @@ class AuthServiceTest {
         then(authMapper).should(times(1)).insertMember(eq(authVo));
     }
 
+    @DisplayName("회원 가입 실패 - 중복 회원 존재")
     @Test
     void singUp_failed_due_to_duplicate_member_exists() {
         // given
@@ -80,6 +83,7 @@ class AuthServiceTest {
         then(authMapper).should(times(1)).isExistedMember(eq(signUpRequestDto.getEmail()));
     }
 
+    @DisplayName("회원 가입 실패 - 회원 등록시 데이터베이스 예외 발생")
     @Test
     void signUp_failed_due_to_db_exception() {
         // given
@@ -100,6 +104,7 @@ class AuthServiceTest {
         then(authMapper).should(times(1)).insertMember(eq(AuthVo.from(signUpRequestDto)));
     }
 
+    @DisplayName("로그인 성공")
     @Test
     void signIn_success() {
         // given
@@ -120,6 +125,7 @@ class AuthServiceTest {
         then(authMapper).should(times(1)).selectMemberByEmail(eq(authVo.getEmail()));
     }
 
+    @DisplayName("로그인 실패 - 이메일 불일치")
     @Test
     void signIn_failed_due_to_wrong_id() {
         // given
@@ -138,6 +144,7 @@ class AuthServiceTest {
         then(authMapper).should(times(1)).selectMemberByEmail(eq(authVo.getEmail()));
     }
 
+    @DisplayName("로그인 실패 - 비밀번호 불일치")
     @Test
     void signIn_failed_due_to_wrong_password() {
         // given
