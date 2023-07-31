@@ -4,28 +4,41 @@ import com.auction.flab.application.vo.AuthVo;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Header;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+<<<<<<< Updated upstream
 import lombok.RequiredArgsConstructor;
+=======
+import lombok.extern.slf4j.Slf4j;
+>>>>>>> Stashed changes
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 
-import javax.xml.bind.DatatypeConverter;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Optional;
 
+<<<<<<< Updated upstream
 @RequiredArgsConstructor
+=======
+@Slf4j
+>>>>>>> Stashed changes
 @Component
 public class TokenProvider {
 
     private final JwtProperties jwtProperties;
+    private final Key secretKey;
+
+    public TokenProvider(JwtProperties jwtProperties) {
+        this.jwtProperties = jwtProperties;
+        this.secretKey = Keys.hmacShaKeyFor(jwtProperties.getSecretKey().getBytes(StandardCharsets.UTF_8));
+    }
 
     public String generateToken(AuthVo authVo, Duration expiredAt) {
         ZoneId zoneId = ZoneId.systemDefault();
@@ -38,18 +51,14 @@ public class TokenProvider {
                 .setExpiration(expiry)
                 .setSubject(authVo.getEmail())
                 .claim("id", authVo.getId())
-                .signWith(createKey(), SignatureAlgorithm.HS256)
+                .signWith(secretKey)
                 .compact();
-    }
-
-    private Key createKey() {
-        return Keys.hmacShaKeyFor(jwtProperties.getSecretKey().getBytes(StandardCharsets.UTF_8));
     }
 
     public Optional<Authentication> getAuthentication(String token) {
         return getClaims(token).map(claims -> {
-            User user = new User(claims.getSubject(), "", null);
-            Authentication authentication = new UsernamePasswordAuthenticationToken(user, token);
+            User user = new User(claims.getSubject(), "", Collections.EMPTY_SET);
+            Authentication authentication = new UsernamePasswordAuthenticationToken(user, token, Collections.EMPTY_SET);
             return authentication;
         }).or(Optional::empty);
     }
@@ -57,11 +66,15 @@ public class TokenProvider {
     private Optional<Claims> getClaims(String token) {
         try {
             return Optional.ofNullable(Jwts.parserBuilder()
-                    .setSigningKey(DatatypeConverter.parseBase64Binary(jwtProperties.getSecretKey()))
+                    .setSigningKey(secretKey)
                     .build()
                     .parseClaimsJws(token)
                     .getBody());
         } catch (Exception e) {
+<<<<<<< Updated upstream
+=======
+            log.error("getClaims = {}", e.getMessage());
+>>>>>>> Stashed changes
             return Optional.empty();
         }
     }
