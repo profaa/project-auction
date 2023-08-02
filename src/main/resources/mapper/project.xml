@@ -55,4 +55,10 @@
          WHERE ID = #{id}
     </update>
 
+    <delete id="deleteProject" parameterType="long">
+        DELETE
+          FROM PROJECT
+         WHERE ID = #{id}
+    </delete>
+
 </mapper>

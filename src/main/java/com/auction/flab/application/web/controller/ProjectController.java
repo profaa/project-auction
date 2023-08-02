@@ -27,4 +27,10 @@ public class ProjectController {
         return new ResponseEntity<>(projectResponseDto, HttpStatus.CREATED);
     }
 
+    @DeleteMapping("/projects/{id}")
+    public ResponseEntity<ProjectResponseDto> deleteProject(@PathVariable Long id) {
+        projectService.deleteProject(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
 }

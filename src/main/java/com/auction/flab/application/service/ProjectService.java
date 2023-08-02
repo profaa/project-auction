@@ -39,4 +39,13 @@ public class ProjectService {
         return ProjectResponseDto.from(id);
     }
 
+    @Transactional
+    public void deleteProject(Long id) {
+        ProjectVo result = projectMapper.selectProject(id);
+        if (result == null || !result.getStatus().equals(ProjectStatus.PROPOSAL)) {
+            throw new InternalException(ErrorCode.EXCEPTION_ON_DELETE_PROJECT);
+        }
+        projectMapper.deleteProject(id);
+    }
+
 }

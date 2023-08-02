@@ -5,11 +5,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Header;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-<<<<<<< Updated upstream
-import lombok.RequiredArgsConstructor;
-=======
 import lombok.extern.slf4j.Slf4j;
->>>>>>> Stashed changes
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
@@ -24,11 +20,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Optional;
 
-<<<<<<< Updated upstream
-@RequiredArgsConstructor
-=======
 @Slf4j
->>>>>>> Stashed changes
 @Component
 public class TokenProvider {
 
@@ -71,10 +63,7 @@ public class TokenProvider {
                     .parseClaimsJws(token)
                     .getBody());
         } catch (Exception e) {
-<<<<<<< Updated upstream
-=======
             log.error("getClaims = {}", e.getMessage());
->>>>>>> Stashed changes
             return Optional.empty();
         }
     }

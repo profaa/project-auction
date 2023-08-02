@@ -12,4 +12,6 @@ public interface ProjectMapper {
 
     int updateProject(ProjectVo projectVo);
 
+    int deleteProject(Long id);
+
 }
