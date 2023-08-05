@@ -22,13 +22,13 @@ public class ProjectController {
     }
 
     @PutMapping("/projects/{id}")
-    public ResponseEntity<ProjectResponseDto> updateProject(@PathVariable Long id, @Valid @RequestBody ProjectRequestDto projectDto) {
-        ProjectResponseDto projectResponseDto = projectService.updateProject(id, projectDto);
-        return new ResponseEntity<>(projectResponseDto, HttpStatus.CREATED);
+    public ResponseEntity<Void> updateProject(@PathVariable Long id, @Valid @RequestBody ProjectRequestDto projectDto) {
+        projectService.updateProject(id, projectDto);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @DeleteMapping("/projects/{id}")
-    public ResponseEntity<ProjectResponseDto> deleteProject(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteProject(@PathVariable Long id) {
         projectService.deleteProject(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

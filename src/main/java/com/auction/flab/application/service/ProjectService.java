@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @RequiredArgsConstructor
 @Service
 public class ProjectService {
@@ -29,11 +31,12 @@ public class ProjectService {
 
     @Transactional
     public ProjectResponseDto updateProject(Long id, ProjectRequestDto projectRequestDto) {
-        ProjectVo projectVo = ProjectVo.from(projectRequestDto);
-        ProjectVo result = projectMapper.selectProject(id);
-        if (result == null || result.getStatus().equals(ProjectStatus.CONFIRMATION)) {
+        ProjectVo result = Optional.ofNullable(projectMapper.selectProject(id))
+                .orElseThrow(() -> new InternalException(ErrorCode.EXCEPTION_ON_UPDATE_PROJECT));
+        if (result.getStatus().equals(ProjectStatus.CONFIRMATION)) {
             throw new InternalException(ErrorCode.EXCEPTION_ON_UPDATE_PROJECT);
         }
+        ProjectVo projectVo = ProjectVo.from(projectRequestDto);
         projectVo.setId(id);
         projectMapper.updateProject(projectVo);
         return ProjectResponseDto.from(id);
@@ -41,8 +44,9 @@ public class ProjectService {
 
     @Transactional
     public void deleteProject(Long id) {
-        ProjectVo result = projectMapper.selectProject(id);
-        if (result == null || !result.getStatus().equals(ProjectStatus.PROPOSAL)) {
+        ProjectVo result = Optional.ofNullable(projectMapper.selectProject(id))
+                .orElseThrow(() -> new InternalException(ErrorCode.EXCEPTION_ON_DELETE_PROJECT));
+        if (!result.getStatus().equals(ProjectStatus.PROPOSAL)) {
             throw new InternalException(ErrorCode.EXCEPTION_ON_DELETE_PROJECT);
         }
         projectMapper.deleteProject(id);

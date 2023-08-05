@@ -496,8 +496,7 @@ class ProjectControllerTest {
         // then
         resultActions
                 .andDo(print())
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id").value(1L));
+                .andExpect(status().isCreated());
     }
 
     @DisplayName("수정 요청 실패 - 요청 ID 없음")
