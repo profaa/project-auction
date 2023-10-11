@@ -3,6 +3,52 @@
 
 <mapper namespace="com.auction.flab.application.mapper.ProjectMapper">
 
+    <select id="selectProjects" parameterType="com.auction.flab.application.vo.PageVo" resultType="com.auction.flab.application.vo.ProjectVo">
+        SELECT A.ID
+             , A.NAME
+             , A.AMOUNT
+             , A.PERIOD
+             , A.DEADLINE
+             , A.START_DATE
+             , A.CONTENT
+             , A.STATUS
+             , A.PROPOSER_ID
+             , (
+                SELECT COUNT(*)
+                  FROM PROJECT_APPLICANTS S
+                 WHERE S.ID = A.ID
+               ) AS APPLICANTS
+             , A.CREATED_DATE
+          FROM PROJECT A
+         ORDER BY CREATED_DATE DESC
+         LIMIT ${page}, ${size}
+    </select>
+
+    <select id="selectTotalProjectCount" resultType="int">
+        SELECT COUNT(ID) AS CNT
+          FROM PROJECT
+    </select>
+
+    <select id="selectProject" parameterType="long" resultType="com.auction.flab.application.vo.ProjectVo">
+        SELECT A.ID
+             , A.NAME
+             , A.AMOUNT
+             , A.PERIOD
+             , A.DEADLINE
+             , A.START_DATE
+             , A.CONTENT
+             , A.STATUS
+             , A.PROPOSER_ID
+             , (
+                SELECT COUNT(*)
+                  FROM PROJECT_APPLICANTS S
+                 WHERE S.ID = A.ID
+               ) AS APPLICANTS
+             , A.CREATED_DATE
+          FROM PROJECT A
+         WHERE A.ID = #{id}
+    </select>
+
     <insert id="insertProject" parameterType="com.auction.flab.application.vo.ProjectVo" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO PROJECT (
                PROPOSER_ID
@@ -28,5 +74,23 @@
              , now()
         )
     </insert>
+
+    <update id="updateProject" parameterType="com.auction.flab.application.vo.ProjectVo">
+        UPDATE PROJECT
+           SET NAME = #{name}
+             , AMOUNT = #{amount}
+             , PERIOD = #{period}
+             , DEADLINE = #{deadline}
+             , START_DATE = #{startDate}
+             , CONTENT = #{content}
+             , MODIFIED_DATE = now()
+         WHERE ID = #{id}
+    </update>
+
+    <delete id="deleteProject" parameterType="long">
+        DELETE
+          FROM PROJECT
+         WHERE ID = #{id}
+    </delete>
 
 </mapper>
