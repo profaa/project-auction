@@ -11,7 +11,7 @@ https://ovenapp.io
 2.ERD  
 https://www.erdcloud.com/d/Bb8CNZcpWYaRoLpiP
 
-![img.png](img.png)
+![image](https://github.com/profaa/project-auction/assets/65659317/8e43ab14-f5ca-4fd5-b3de-0aded0f8bf50)
 
 3.Project Specification  
 * Java 17  
