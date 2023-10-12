@@ -5,15 +5,16 @@
 목표로 한다.
 
 
-1.Frontend 구성도  
-https://ovenapp.io
+<h2>1.Frontend</h2>  
+<h4>카카오 오븐을 통해 프론트 화면을 작성하고 API를 보낸다는 가정하게 백엔드 개발 만을 진행함.</h4>
+https://ovenapp.io  
 
-2.ERD  
-https://www.erdcloud.com/d/Bb8CNZcpWYaRoLpiP
+<h2>2.ERD</h2>  
 
 ![image](https://github.com/profaa/project-auction/assets/65659317/8e43ab14-f5ca-4fd5-b3de-0aded0f8bf50)
 
-3.Project Specification  
+<h2>3.Project Specification</h2>  
+
 * Java 17  
 * Springboot 3.0.7  
 * MariaDB 10.4  
